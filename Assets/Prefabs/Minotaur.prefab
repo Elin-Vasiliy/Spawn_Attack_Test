@@ -147,3 +147,4 @@ MonoBehaviour:
   Speed: 8.33
   Health: 100
   ParticleDamage: 3
+  Reward: 50

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Enemy : MonoBehaviour
 {
@@ -10,6 +11,8 @@ public class Enemy : MonoBehaviour
     public float Speed;
     public float Health;
     public float ParticleDamage;
+    public int Reward;
+    public event UnityAction<int> OnEnemyDie;
 
     private Player _target;
     private float _lastAttackTime;
@@ -53,6 +56,7 @@ public class Enemy : MonoBehaviour
         Health -= ParticleDamage;
         if (Health <= 0)
         {
+            OnEnemyDie?.Invoke(Reward);
             Destroy(gameObject);
         }
     }

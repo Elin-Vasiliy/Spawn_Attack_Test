@@ -9,6 +9,7 @@ public class Spawner : MonoBehaviour
     public Transform SpawnPoint;
     public Player Player;
     public Action<int, int> ChangeEnemyCount;
+    public GameObject NextWaveButton;
 
     private Wave _currentWave;
     private int _waveCount;
@@ -28,8 +29,9 @@ public class Spawner : MonoBehaviour
 
         if(_lastSpawnTime >= _currentWave.Delay)
         {
-            var enemy = Instantiate(_currentWave.Prefab, SpawnPoint.position, SpawnPoint.rotation, SpawnPoint);
-            enemy.GetComponent<Enemy>().SetTarget(Player);
+            var enemy = Instantiate(_currentWave.Prefab, SpawnPoint.position, SpawnPoint.rotation, SpawnPoint).GetComponent<Enemy>();
+            enemy.SetTarget(Player);
+            enemy.OnEnemyDie += Player.GetRewardMoney;
             _spawned++;
             _lastSpawnTime = 0;
             ChangeEnemyCount?.Invoke(_currentWave.Count, _spawned);
@@ -39,14 +41,22 @@ public class Spawner : MonoBehaviour
         {
             if (Waves.Count > _waveCount + 1)
             {
-                SetWave(++_waveCount);
-                _spawned = 0;
+                NextWaveButton.SetActive(true);
+                _currentWave = null;
             }
             else
             {
                 _currentWave = null;
             }
         }
+    }
+
+    public void NextWave()
+    {
+        SetWave(++_waveCount);
+        _spawned = 0;
+        ChangeEnemyCount?.Invoke(1, 0);
+        NextWaveButton.SetActive(false);
     }
 
     private void SetWave(int index)
